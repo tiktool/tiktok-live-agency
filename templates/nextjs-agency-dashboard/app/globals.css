@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0b0d10;
+  --panel: #13171c;
+  --line: #232a32;
+  --ink: #e8edf2;
+  --muted: #8a96a3;
+  --accent: #5eead4;
+  --live: #f43f5e;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.muted { color: var(--muted); }
+.accent { color: var(--accent); }
+.live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 9999px; background: var(--live); box-shadow: 0 0 0 3px rgb(244 63 94 / 0.2); }
+.off-dot { display: inline-block; width: 8px; height: 8px; border-radius: 9999px; background: var(--line); }
+table.data { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.data th { text-align: left; font-weight: 500; color: var(--muted); padding: 8px 12px; border-bottom: 1px solid var(--line); }
+table.data td { padding: 8px 12px; border-bottom: 1px solid var(--line); }
+a.link { color: var(--accent); }

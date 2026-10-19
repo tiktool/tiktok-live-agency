@@ -1,0 +1,31 @@
+{
+  "name": "nextjs-agency-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "description": "TikTok LIVE agency dashboard on tiktok-live-agency. Runs with only TIKTOOLS_API_KEY.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "postbuild": "node scripts/check-bundle.mjs",
+    "start": "next start",
+    "setup-alerts": "node --env-file=.env.local scripts/setup-alerts.mjs"
+  },
+  "dependencies": {
+    "next": "^16.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1",
+    "tiktok-live-agency": "^0.1.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=20.9"
+  }
+}

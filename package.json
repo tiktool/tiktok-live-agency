@@ -1,0 +1,71 @@
+{
+  "name": "tiktok-live-agency",
+  "version": "0.1.0",
+  "description": "Unofficial TikTok LIVE agency SDK by tik.tools: find creators to recruit, track diamonds and live status across your roster, and build your own agency dashboard. Not affiliated with or endorsed by TikTok or ByteDance.",
+  "author": "tik.tools <support@tik.tools>",
+  "license": "MIT",
+  "keywords": [
+    "tiktok",
+    "tiktok-live",
+    "tiktok-live-agency",
+    "agency",
+    "creator-recruitment",
+    "creator-management",
+    "diamonds",
+    "live-status",
+    "roster",
+    "dashboard",
+    "tiktok-live-api"
+  ],
+  "homepage": "https://tik.tools/sdk/agency",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tiktool/tiktok-live-agency"
+  },
+  "bugs": {
+    "url": "https://github.com/tiktool/tiktok-live-agency/issues"
+  },
+  "type": "commonjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": { "types": "./dist/index.d.mts", "default": "./dist/index.mjs" },
+      "require": { "types": "./dist/index.d.ts", "default": "./dist/index.js" }
+    },
+    "./webhooks": {
+      "import": { "types": "./dist/webhooks.d.mts", "default": "./dist/webhooks.mjs" },
+      "require": { "types": "./dist/webhooks.d.ts", "default": "./dist/webhooks.js" }
+    },
+    "./firehose": {
+      "import": { "types": "./dist/firehose.d.mts", "default": "./dist/firehose.mjs" },
+      "require": { "types": "./dist/firehose.d.ts", "default": "./dist/firehose.js" }
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "spec/methods.json",
+    "README.md",
+    "llms.txt",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "docs": "node scripts/gen-docs.mjs",
+    "test": "npm run build && node --test test/client.test.mjs test/live.test.mjs test/webhooks.test.mjs test/firehose.test.mjs test/manifest.test.mjs",
+    "e2e": "node e2e/e2e.mjs",
+    "prepublishOnly": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.130",
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

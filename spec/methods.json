@@ -1,0 +1,617 @@
+{
+  "$comment": "Single source of truth for the agency SDK surface. Both clients, the README reference tables, both llms.txt files and the manifest tests read this file. kind: endpoint = one HTTP call, helper = client-side composition, local = no network, ws = WebSocket.",
+  "tiers": {
+    "demo": "No key",
+    "sandbox": "Sandbox",
+    "basic": "Basic",
+    "pro": "Pro",
+    "ultra": "Ultra",
+    "agency_global": "Agency"
+  },
+  "methods": [
+    {
+      "group": "account",
+      "name": "getAccount",
+      "py": "get_account",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/rate_limits",
+      "minTier": "sandbox",
+      "returns": "AccountInfo",
+      "summary": "Your plan, per-minute limit, bulk check size and evaluation end date. Cached 5 minutes."
+    },
+    {
+      "group": "account",
+      "name": "listRegions",
+      "py": "list_regions",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/global",
+      "minTier": "sandbox",
+      "returns": "RegionInfo[]",
+      "summary": "Every ranked region with its code, label and live count, so you never hardcode region codes."
+    },
+    {
+      "group": "recruit",
+      "name": "findCreatorsToRecruit",
+      "py": "find_creators_to_recruit",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/eligible_creators",
+      "minTier": "agency_global",
+      "returns": "RecruitPage",
+      "summary": "Creators ranked in a region who are candidates to recruit, with your last known Backstage verdict per row."
+    },
+    {
+      "group": "recruit",
+      "name": "iterCreatorsToRecruit",
+      "py": "iter_creators_to_recruit",
+      "kind": "helper",
+      "http": "GET",
+      "path": "/webcast/eligible_creators",
+      "minTier": "agency_global",
+      "returns": "RecruitCandidate (one per row)",
+      "summary": "Walks every page of findCreatorsToRecruit and yields rows; waits for the rate-limit reset when needed.",
+      "endpointNote": "pages"
+    },
+    {
+      "group": "recruit",
+      "name": "isFreeToJoin",
+      "py": "is_free_to_join",
+      "kind": "local",
+      "minTier": "demo",
+      "returns": "boolean",
+      "summary": "True when a recruit row's last known Backstage verdict is eligible. Not a live invite check."
+    },
+    {
+      "group": "recruit",
+      "name": "newCreators",
+      "py": "new_creators",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/creator_digest",
+      "minTier": "agency_global",
+      "returns": "NewCreatorPage",
+      "summary": "Creators who recently appeared in a region's recruit pool, newest first, with 7 and 30 day earnings estimates."
+    },
+    {
+      "group": "recruit",
+      "name": "iterNewCreators",
+      "py": "iter_new_creators",
+      "kind": "helper",
+      "http": "GET",
+      "path": "/webcast/creator_digest",
+      "minTier": "agency_global",
+      "returns": "NewCreator (one per row)",
+      "summary": "Walks every page of newCreators and yields rows.",
+      "endpointNote": "pages"
+    },
+    {
+      "group": "recruit",
+      "name": "leagueDivisions",
+      "py": "league_divisions",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/league_divisions",
+      "minTier": "sandbox",
+      "returns": "LeagueDivisionsResponse",
+      "summary": "League divisions in a region (A1, B2 ...) with member counts."
+    },
+    {
+      "group": "recruit",
+      "name": "leagueMembers",
+      "py": "league_members",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/league_divisions",
+      "minTier": "sandbox",
+      "returns": "LeagueMembersResponse",
+      "summary": "Creators in one or more league divisions. Names hidden on lower plans: Sandbox sees 3 masked rows, Basic and Pro the top 10 offline names, Ultra and up everything."
+    },
+    {
+      "group": "recruit",
+      "name": "droppedOutCreators",
+      "py": "dropped_out_creators",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/region_movers",
+      "minTier": "sandbox",
+      "returns": "RegionMoversResponse",
+      "summary": "Creators who ranked on a region's board recently and fell below the cutoff, with diamonds needed to re-enter. Names unmasked on Agency."
+    },
+    {
+      "group": "recruit",
+      "name": "leagueDropouts",
+      "py": "league_dropouts",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/league_movers",
+      "minTier": "sandbox",
+      "returns": "LeagueMoversResponse",
+      "summary": "Per league division, creators who dropped out of the top 99. Names unmasked on Agency."
+    },
+    {
+      "group": "recruit",
+      "name": "gamingDropouts",
+      "py": "gaming_dropouts",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/gaming_movers",
+      "minTier": "sandbox",
+      "returns": "GamingMoversResponse",
+      "summary": "Gaming creators who fell off the gaming boards. Beta."
+    },
+    {
+      "group": "recruit",
+      "name": "boardHistory",
+      "py": "board_history",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/board_history",
+      "minTier": "sandbox",
+      "returns": "BoardHistoryMovers | BoardHistorySnapshot",
+      "summary": "Who entered, left and moved on a board over a window (2h and 6h on Sandbox, 12h and 24h on Pro, 3d and point-in-time on Ultra)."
+    },
+    {
+      "group": "rankings",
+      "name": "leaderboard",
+      "py": "leaderboard",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard",
+      "minTier": "sandbox",
+      "returns": "LeaderboardResponse",
+      "summary": "A region's daily board (any key). Weekly, gaming and shopping need Agency; league needs Ultra."
+    },
+    {
+      "group": "rankings",
+      "name": "globalLeaderboard",
+      "py": "global_leaderboard",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/global",
+      "minTier": "sandbox",
+      "returns": "GlobalLeaderboardResponse",
+      "summary": "The top creators of every region in one call."
+    },
+    {
+      "group": "rankings",
+      "name": "clubRankings",
+      "py": "club_rankings",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/teams",
+      "minTier": "sandbox",
+      "returns": "BoardResponse",
+      "summary": "The clubs board for a region. Full list on Agency, 3-row preview below."
+    },
+    {
+      "group": "rankings",
+      "name": "popularLive",
+      "py": "popular_live",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/popular",
+      "minTier": "sandbox",
+      "returns": "BoardResponse",
+      "summary": "The Popular LIVE board for a region. Full list on Agency, 3-row preview below."
+    },
+    {
+      "group": "rankings",
+      "name": "gamingRankings",
+      "py": "gaming_rankings",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/leaderboard/gaming",
+      "minTier": "sandbox",
+      "returns": "BoardResponse",
+      "summary": "Gaming boards for a region, per game. Full list on Agency, 3-row preview below."
+    },
+    {
+      "group": "rankings",
+      "name": "liveCounts",
+      "py": "live_counts",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/live-counts",
+      "minTier": "sandbox",
+      "returns": "LiveCounts",
+      "summary": "How many creators are live right now, globally and per region."
+    },
+    {
+      "group": "rankings",
+      "name": "topGifters",
+      "py": "top_gifters",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/gifters/leaderboard",
+      "minTier": "pro",
+      "returns": "TopGiftersResponse",
+      "summary": "The biggest gifters in a region over a rolling day, week or month. Masked on Pro and Ultra, unmasked on Agency."
+    },
+    {
+      "group": "vet",
+      "name": "getCreator",
+      "py": "get_creator",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/creator-core",
+      "minTier": "sandbox",
+      "returns": "CreatorCore",
+      "summary": "A creator's region, current rank, board score and live state in one call."
+    },
+    {
+      "group": "vet",
+      "name": "getCreatorProfile",
+      "py": "get_creator_profile",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/user_profile",
+      "minTier": "pro",
+      "returns": "CreatorProfile",
+      "summary": "Full profile: followers, likes, videos, verified, private, app language. Daily lookup quota per plan."
+    },
+    {
+      "group": "vet",
+      "name": "findRenamedCreator",
+      "py": "find_renamed_creator",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/lookup_username",
+      "minTier": "sandbox",
+      "returns": "RenameLookup",
+      "summary": "Finds the current handle of a creator who renamed, so a roster stays correct."
+    },
+    {
+      "group": "vet",
+      "name": "resolveUserIds",
+      "py": "resolve_user_ids",
+      "kind": "endpoint",
+      "http": "POST",
+      "path": "/webcast/resolve_user_ids",
+      "minTier": "basic",
+      "returns": "Record<string, ResolvedUser>",
+      "summary": "Turns numeric TikTok user ids into handles."
+    },
+    {
+      "group": "stats",
+      "name": "getCreatorSummary",
+      "py": "get_creator_summary",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "summary"
+      },
+      "minTier": "agency_global",
+      "returns": "CreatorSummary",
+      "summary": "Gifts, diamonds, gifters, battles, chat and likes for a creator over 1-90 days."
+    },
+    {
+      "group": "stats",
+      "name": "getDailyDiamonds",
+      "py": "get_daily_diamonds",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "daily"
+      },
+      "minTier": "agency_global",
+      "returns": "DailyDiamonds",
+      "summary": "Diamonds per UTC day from captured gifts, with a complete flag per day. A lower bound, not the Backstage payout figure."
+    },
+    {
+      "group": "stats",
+      "name": "getCreatorGifters",
+      "py": "get_creator_gifters",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "gifters"
+      },
+      "minTier": "agency_global",
+      "returns": "CreatorGifters",
+      "summary": "Who sent a creator the most diamonds."
+    },
+    {
+      "group": "stats",
+      "name": "getCreatorGifts",
+      "py": "get_creator_gifts",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "gifts"
+      },
+      "minTier": "agency_global",
+      "returns": "CreatorGifts",
+      "summary": "Which gifts a creator received, how many and from how many senders."
+    },
+    {
+      "group": "stats",
+      "name": "getCreatorBattles",
+      "py": "get_creator_battles",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "battles"
+      },
+      "minTier": "agency_global",
+      "returns": "CreatorBattles",
+      "summary": "Battles with opponent, scores, result and duration."
+    },
+    {
+      "group": "stats",
+      "name": "getCreatorChat",
+      "py": "get_creator_chat",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "chat"
+      },
+      "minTier": "agency_global",
+      "returns": "CreatorChat",
+      "summary": "Chat messages from a creator's streams. Only for creators on one of your rosters."
+    },
+    {
+      "group": "stats",
+      "name": "getCreatorActivity",
+      "py": "get_creator_activity",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "activity"
+      },
+      "minTier": "agency_global",
+      "returns": "CreatorActivity",
+      "summary": "Likes and viewer joins per day."
+    },
+    {
+      "group": "stats",
+      "name": "getCreatorGoals",
+      "py": "get_creator_goals",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "query": {
+        "type": "goals"
+      },
+      "minTier": "agency_global",
+      "returns": "CreatorGoals",
+      "summary": "Stream goals with progress and top contributors."
+    },
+    {
+      "group": "roster",
+      "name": "listRosters",
+      "py": "list_rosters",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/lists",
+      "minTier": "agency_global",
+      "returns": "RosterIndex",
+      "summary": "Your rosters with member and live counts (max 50 rosters)."
+    },
+    {
+      "group": "roster",
+      "name": "createRoster",
+      "py": "create_roster",
+      "kind": "endpoint",
+      "http": "POST",
+      "path": "/webcast/agency/lists",
+      "minTier": "agency_global",
+      "returns": "RosterCreated",
+      "summary": "Creates a named roster."
+    },
+    {
+      "group": "roster",
+      "name": "getRoster",
+      "py": "get_roster",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/agency/list",
+      "minTier": "agency_global",
+      "returns": "Roster",
+      "summary": "A roster's creators with live flag, score, followers and diamonds, live first."
+    },
+    {
+      "group": "roster",
+      "name": "deleteRoster",
+      "py": "delete_roster",
+      "kind": "endpoint",
+      "http": "DELETE",
+      "path": "/webcast/agency/list",
+      "minTier": "agency_global",
+      "returns": "{ ok, deleted }",
+      "summary": "Deletes a roster."
+    },
+    {
+      "group": "roster",
+      "name": "addToRoster",
+      "py": "add_to_roster",
+      "kind": "endpoint",
+      "http": "POST",
+      "path": "/webcast/agency/list/members",
+      "minTier": "agency_global",
+      "returns": "RosterChange",
+      "summary": "Adds creators (chunks of 200, max 1000 per roster). Gift and chat capture starts from that moment."
+    },
+    {
+      "group": "roster",
+      "name": "removeFromRoster",
+      "py": "remove_from_roster",
+      "kind": "endpoint",
+      "http": "POST",
+      "path": "/webcast/agency/list/members",
+      "minTier": "agency_global",
+      "returns": "RosterChange",
+      "summary": "Removes creators from a roster."
+    },
+    {
+      "group": "roster",
+      "name": "rosterDiamonds",
+      "py": "roster_diamonds",
+      "kind": "helper",
+      "http": "GET",
+      "path": "/webcast/agency/events",
+      "minTier": "agency_global",
+      "returns": "RosterDiamonds",
+      "summary": "Diamonds per creator and in total for a roster or a list of handles. One request per creator.",
+      "endpointNote": "one per creator"
+    },
+    {
+      "group": "live",
+      "name": "isLive",
+      "py": "is_live",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/live_status",
+      "minTier": "demo",
+      "returns": "boolean | null",
+      "summary": "Is this creator live right now? true, false, or null when it could not be determined. Works with no key."
+    },
+    {
+      "group": "live",
+      "name": "isLiveDetailed",
+      "py": "is_live_detailed",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/live_status",
+      "minTier": "demo",
+      "returns": "LiveStatus",
+      "summary": "Same check with room id and cache flag."
+    },
+    {
+      "group": "live",
+      "name": "whoIsLive",
+      "py": "who_is_live",
+      "kind": "endpoint",
+      "http": "POST",
+      "path": "/webcast/bulk_live_check",
+      "minTier": "basic",
+      "returns": "WhoIsLiveResult",
+      "summary": "Splits many creators into live, offline and unknown. Chunks to your plan's batch size (Basic 10, Pro 50, Ultra 100, Agency 200)."
+    },
+    {
+      "group": "live",
+      "name": "watchLive",
+      "py": "watch_live",
+      "kind": "helper",
+      "http": "GET",
+      "path": "/webcast/live_status",
+      "minTier": "sandbox",
+      "returns": "LiveEvent stream",
+      "summary": "Polls your creators and fires live and end events. A failed check never ends a stream; an end needs two offline polls in a row.",
+      "endpointNote": "polling, one per creator; POST /webcast/bulk_live_check on Basic and up"
+    },
+    {
+      "group": "firehose",
+      "name": "streamBigGifts",
+      "py": "stream_big_gifts",
+      "kind": "ws",
+      "path": "/firehose/gifters",
+      "minTier": "agency_global",
+      "returns": "GifterAlert stream",
+      "summary": "Real-time alerts for gifts of 1,000+ diamonds: global, one region (mode region, needs region), or one league division (mode league, needs league; region optional). Each alert carries the creator's league division in classType when known. Needs an active Agency subscription."
+    },
+    {
+      "group": "eligibility",
+      "name": "getEligibility",
+      "py": "get_eligibility",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/eligibility/results",
+      "minTier": "agency_global",
+      "returns": "EligibilityVerdicts",
+      "summary": "The last invite verdicts your Backstage extension recorded for these creators. Does not run a new check."
+    },
+    {
+      "group": "eligibility",
+      "name": "getEligibilityAccounts",
+      "py": "get_eligibility_accounts",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/eligibility/limits",
+      "minTier": "agency_global",
+      "returns": "EligibilityAccounts",
+      "summary": "Your connected Backstage accounts with cooldowns, plus roster and premium totals."
+    },
+    {
+      "group": "webhooks",
+      "name": "listWebhooks",
+      "py": "list_webhooks",
+      "kind": "endpoint",
+      "http": "GET",
+      "path": "/webcast/webhooks",
+      "minTier": "basic",
+      "returns": "WebhookList",
+      "summary": "Your webhooks, plan limits and today's delivery quota."
+    },
+    {
+      "group": "webhooks",
+      "name": "createWebhook",
+      "py": "create_webhook",
+      "kind": "endpoint",
+      "http": "POST",
+      "path": "/webcast/webhooks",
+      "minTier": "basic",
+      "returns": "WebhookCreated",
+      "summary": "Sends signed events (live.start, live.end, more on higher plans) to your URL for chosen creators or rosters."
+    },
+    {
+      "group": "webhooks",
+      "name": "updateWebhook",
+      "py": "update_webhook",
+      "kind": "endpoint",
+      "http": "PATCH",
+      "path": "/webcast/webhooks/{id}",
+      "minTier": "basic",
+      "returns": "{ ok, webhook }",
+      "summary": "Changes a webhook's URL, events, creators, rosters or active state."
+    },
+    {
+      "group": "webhooks",
+      "name": "deleteWebhook",
+      "py": "delete_webhook",
+      "kind": "endpoint",
+      "http": "DELETE",
+      "path": "/webcast/webhooks/{id}",
+      "minTier": "basic",
+      "returns": "{ ok }",
+      "summary": "Deletes a webhook."
+    },
+    {
+      "group": "webhooks",
+      "name": "testWebhook",
+      "py": "test_webhook",
+      "kind": "endpoint",
+      "http": "POST",
+      "path": "/webcast/webhooks/{id}/test",
+      "minTier": "basic",
+      "returns": "WebhookTestResult",
+      "summary": "Sends a signed sample live.start to your URL and reports what it answered."
+    },
+    {
+      "group": "webhooks",
+      "name": "verifyWebhook",
+      "py": "verify_webhook",
+      "kind": "local",
+      "minTier": "demo",
+      "returns": "WebhookEvent",
+      "summary": "Checks the X-Tiktool-Signature header against the raw body and your secret, rejects old timestamps, returns the typed event. No key needed."
+    },
+    {
+      "group": "webhooks",
+      "name": "toDiscordMessage",
+      "py": "to_discord_message",
+      "kind": "local",
+      "minTier": "demo",
+      "returns": "Discord webhook body",
+      "summary": "Formats an event as a Discord message body."
+    }
+  ]
+}

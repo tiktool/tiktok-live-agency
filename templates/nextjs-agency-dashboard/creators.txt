@@ -1,0 +1,3 @@
+# Your creators, one TikTok handle per line (with or without @).
+# Used when your key has no roster access (rosters need the Agency plan).
+# With no handles here and no roster, the dashboard watches the top of your region's daily board.
