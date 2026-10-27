@@ -11,7 +11,7 @@ const payload = JSON.stringify({
 });
 const now = 1792400000;
 
-// Same algorithm as the server implementation, so the verifier is checked against the server's own signer.
+// Reference signer using the documented algorithm, so the verifier is checked independently.
 function serverSign(body, ts, key = secret) {
   return `t=${ts},v1=${createHmac('sha256', key).update(`${ts}.${body}`).digest('hex')}`;
 }

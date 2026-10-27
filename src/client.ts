@@ -50,7 +50,7 @@ const ACCOUNT_CACHE_MS = 5 * 60 * 1000;
 const ROSTER_CHUNK = 200;
 const ELIGIBILITY_CHUNK = 300;
 const FALLBACK_BULK_LIMIT = 10;
-// -1 means no plan cap (internal keys); still keep each request a sane size.
+// -1 means no plan cap; still keep each request a sane size.
 const UNLIMITED_BULK_CHUNK = 200;
 const FANOUT_WARN_AT = 50;
 // Hourly route caps reset within the hour, so a page walk never waits longer than that.
